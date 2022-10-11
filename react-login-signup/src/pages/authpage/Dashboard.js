@@ -23,11 +23,16 @@ const Dashboard = () => {
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const { access_token } = getToken()
+
+  // change password
   const [changeuserpassword, {isError, isLoading}] = useChangeuserpasswordMutation()
   
-  const { access_token } = getToken()
+  // get user profile
   const {data, isSuccess} = useGetuserQuery(access_token)
 
+  // user user profile data
   const users = useSelector(state => state.user)
 
   // -----------------------------------------
@@ -39,6 +44,7 @@ const Dashboard = () => {
         email: data.email,
         username: data.username
       }))
+
     }
 
   }, [data, isSuccess, dispatch])
@@ -46,12 +52,15 @@ const Dashboard = () => {
   // --------------------------------------
   
   const handlelogout = () => {
+
     dispatch( unSetUserInfo({
       username : '',
       email : ''
     } ))
+
     dispatch( unSetUserToken({access_token : null}) )
     removeToken()
+
     navigate('/login-reg')
   }
   

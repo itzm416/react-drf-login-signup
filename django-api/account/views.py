@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from account.serializers import UserRegistrationSerializer, UserProfileSerializer, UserLoginSerializer, UpdateProfileSerializer, User_Change_Password_Serializer, User_Send_Email_Password_Serializer, User_Password_Reset_Serializer
+from account.serializers import UserRegistrationSerializer, ProfileSerializer, UserLoginSerializer, User_Change_Password_Serializer, User_Send_Email_Password_Serializer, User_Password_Reset_Serializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 
@@ -61,6 +61,7 @@ class UserLoginView(APIView):
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         email = serializer.data.get('email')
         password = serializer.data.get('password')
 
@@ -106,7 +107,8 @@ class UserProfileView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
-        serializer = UserProfileSerializer(request.user)
+        user = MyUser.objects.get(pk=request.user.id)
+        serializer = ProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UpdateProfileView(APIView):
@@ -114,7 +116,8 @@ class UpdateProfileView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     def patch(self, request, format=None):
-        serializer = UpdateProfileSerializer(instance=request.user, data=request.data)
+        user = MyUser.objects.get(pk=request.user.id)
+        serializer = ProfileSerializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         res = {'msg':'User update success'}

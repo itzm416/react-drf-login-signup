@@ -30,18 +30,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=225)
     class Meta:
-        model = MyUser
+        model = MyUser 
         fields = ['email','password']
    
-class UserProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['id','email','username','first_name','last_name']
-
-class UpdateProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MyUser
-        fields = ['id','email','username','first_name','last_name']
+        fields = ['id','email','username','first_name','last_name','user_image']
 
 class User_Change_Password_Serializer(serializers.Serializer):
     password = serializers.CharField(style={'input_type':'password'}, write_only=True)
@@ -113,4 +108,6 @@ class User_Password_Reset_Serializer(serializers.Serializer):
         except DjangoUnicodeDecodeError as identifier:
             PasswordResetTokenGenerator().check_token(user,token)
             raise serializers.ValidationError('Token is not valid')
+
+
 
